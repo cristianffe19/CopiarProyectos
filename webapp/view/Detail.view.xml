@@ -1,0 +1,965 @@
+<mvc:View
+    controllerName="com.co.stratesys.zpscopiarproyectos.controller.Detail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:table="sap.ui.table"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+>
+    <f:DynamicPage
+        id="detailPage"
+        busy="{detailView>/busy}"
+        busyIndicatorDelay="0"
+    >
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:content>
+                  
+                </f:content>
+
+                <f:navigationActions />
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <IconTabBar
+                id="detailIconTabBar"
+                select="onTabSelect"
+                expandable="false"
+            >
+                <items>
+                    <IconTabFilter
+                        key="general"
+                        text="{i18n>detailTabGeneral}"
+                    >
+                        <VBox>
+                            <Toolbar>
+                                <ToolbarSpacer />
+                                <Button
+                                    icon="sap-icon://action-settings"
+                                    tooltip="{i18n>fieldSettingsTooltip}"
+                                    press="onFormFieldSettings"
+                                />
+                            </Toolbar>
+
+                            <form:Form
+                                id="projectHeaderForm"
+                                editable="false"
+                            >
+                                <form:layout>
+                                    <form:ResponsiveGridLayout
+                                        labelSpanL="5"
+                                        labelSpanM="5"
+                                        labelSpanS="12"
+                                        columnsL="1"
+                                        columnsM="1"
+                                        adjustLabelSpan="false"
+                                    />
+                                </form:layout>
+
+                                <form:formContainers>
+                                    <!-- Sección: Datos generales -->
+                                    <form:FormContainer
+                                        title="{i18n>DatosGenerales}"
+                                    >
+                                        <form:formElements>
+                                            <form:FormElement
+                                                label="{i18n>ProjectName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjectName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjectStage}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjectStage}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>StageDesc}"
+                                            >
+                                                <form:fields>
+                                                    <Text text="{StageDesc}" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjectCategory}"
+                                                visible="false"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjectCategory}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>Customer}"
+                                            >
+                                                <form:fields>
+                                                    <Text text="{Customer}" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>CustomerName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{CustomerName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>Currency}"
+                                            >
+                                                <form:fields>
+                                                    <Text text="{Currency}" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>Currencyname}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{Currencyname}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                        </form:formElements>
+                                    </form:FormContainer>
+
+                                    <!-- Sección: Fechas -->
+                                    <form:FormContainer title="{i18n>Fechas}">
+                                        <form:formElements>
+                                            <form:FormElement
+                                                label="{i18n>StartDate}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{path: 'StartDate', formatter: '.formatter.formatODataDate'}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>EndDate}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{path: 'EndDate', formatter: '.formatter.formatODataDate'}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ChangedOn}"
+                                                visible="false"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{path: 'ChangedOn', formatter: '.formatter.formatODataDateTime'}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ChangedBy}"
+                                                visible="false"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ChangedBy}"
+                                                        class="customBoldLabel"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                        </form:formElements>
+                                    </form:FormContainer>
+
+                                    <!-- Sección: Organización -->
+                                    <form:FormContainer
+                                        title="{i18n>Organización}"
+                                    >
+                                        <form:formElements>
+                                            <form:FormElement
+                                                label="{i18n>ProjManagerId}"
+                                                visible="false"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjManagerId}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjManagerName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjManagerName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjAccountantId}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjAccountantId}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjAccountantName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjAccountantName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjControllerId}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjControllerId}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjControllerName}"
+                                                visible="false"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjControllerName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjPartnerId}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjPartnerId}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProjPartnerName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProjPartnerName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProfitCenter}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProfitCenter}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>ProfitCenterName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{ProfitCenterName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>CostCenter}"
+                                            >
+                                                <form:fields>
+                                                    <Text text="{CostCenter}" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>CostCenterName}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{CostCenterName}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>OrgID}"
+                                            >
+                                                <form:fields>
+                                                    <Text text="{OrgID}" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>OrgDesc}"
+                                            >
+                                                <form:fields>
+                                                    <Text text="{OrgDesc}" />
+                                                </form:fields>
+                                            </form:FormElement>
+                                        </form:formElements>
+                                    </form:FormContainer>
+
+                                    <!-- Sección: Campos YY1 -->
+                                    <form:FormContainer
+                                        title="{i18n>Campos Personalizados}"
+                                    >
+                                        <form:formElements>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Fechadeventa_Cpr}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{path: 'YY1_Fechadeventa_Cpr', formatter: '.formatter.formatODataDate'}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Geografia_Cpr}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{YY1_Geografia_Cpr}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Geografia_CprT}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{YY1_Geografia_CprT}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Producto_Cpr}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{YY1_Producto_Cpr}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Producto_CprT}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{YY1_Producto_CprT}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Tipodeproyecto_Cpr}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{YY1_Tipodeproyecto_Cpr}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement
+                                                label="{i18n>YY1_Tipodeproyecto_CprT}"
+                                            >
+                                                <form:fields>
+                                                    <Text
+                                                        text="{YY1_Tipodeproyecto_CprT}"
+                                                    />
+                                                </form:fields>
+                                            </form:FormElement>
+                                        </form:formElements>
+                                    </form:FormContainer>
+                                </form:formContainers>
+                            </form:Form>
+                        </VBox>
+                    </IconTabFilter>
+                    <!-- Nuevo tab: Datos generales -->
+
+                    <IconTabFilter
+                        key="roles"
+                        text="{i18n>detailTabRoles}"
+                    >
+                        <Table
+                            id="rolesTable"
+                            items="{/QueryRoles}"
+                            noDataText="{i18n>detailNoDataRoles}"
+                            growing="true"
+                            growingScrollToLoad="true"
+                        >
+                            <columns>
+                                <Column>
+                                    <Text text="{i18n>detailRoleID}" />
+                                </Column>
+                                <Column>
+                                    <Text text="{i18n>detailRoleDescription}" />
+                                </Column>
+                                <Column>
+                                    <Text
+                                        text="{i18n>detailBusinessPartnerID}"
+                                    />
+                                </Column>
+                                <Column>
+                                    <Text
+                                        text="{i18n>detailBusinessPartnerName}"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{ProjectRoleID}" />
+                                        <Text text="{ProjectRoleName}" />
+                                        <Text text="{BusinessPartnerID}" />
+                                        <Text text="{BusinessPartnerName}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+
+                    <IconTabFilter
+                        key="workPackage"
+                        text="{i18n>detailTabWorkPackage}"
+                    >
+                        <table:Table
+                            xmlns:table="sap.ui.table"
+                            id="workPackageTable"
+                            rows="{/QueryPackage}"
+                            selectionMode="None"
+                            enableColumnReordering="true"
+                        >
+                            <table:extension>
+                                <Toolbar>
+                                    <ToolbarSpacer />
+                                    <Button
+                                        icon="sap-icon://action-settings"
+                                        press="onColumnSettings"
+                                    >
+                                        <customData>
+                                            <core:CustomData
+                                                key="tableId"
+                                                value="workPackageTable"
+                                            />
+                                        </customData>
+                                    </Button>
+                                </Toolbar>
+                            </table:extension>
+
+                            <table:noData>
+                                <Text text="{i18n>detailNoDataWorkPackage}" />
+                            </table:noData>
+
+                            <table:columns>
+                                <table:Column
+                                    id="colPaquete"
+                                    width="7em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>Paquete}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{WorkPackageID}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colDescPaquete"
+                                    width="10em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>DescPaquete}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{WorkPackageName}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colWorkPackageType"
+                                    width="9em"
+                                    resizable="true"
+                                    visible="false"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>WorkPackageType}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{WorkPackageType}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colWorkPackageUnitText"
+                                    width="10em"
+                                    resizable="true"
+                                    visible="false"
+                                >
+                                    <table:label>
+                                        <Text
+                                            text="{i18n>WorkPackageUnitText}"
+                                        />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{WorkPackageUnitText}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colUnitOfMeasure"
+                                    width="8em"
+                                    resizable="true"
+                                    visible="false"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>UnitOfMeasure}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{UnitOfMeasure}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colQuantity"
+                                    width="7em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>Quantity}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{Quantity}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colChangedBy"
+                                    width="8em"
+                                    resizable="true"
+                                    visible="false"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>ChangedBy}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{ChangedBy}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colChangedOn"
+                                    width="9em"
+                                    resizable="true"
+                                    visible="false"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>ChangedOn}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{path: 'ChangedOn', formatter: '.formatter.formatODataDateTime'}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colWPStartDate"
+                                    width="8em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>StartDate}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{path: 'WPStartDate', formatter: '.formatter.formatODataDate'}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colWPEndDate"
+                                    width="8em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text text="{i18n>EndDate}" />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{path: 'WPEndDate', formatter: '.formatter.formatODataDate'}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colYY1cpd"
+                                    width="10em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text
+                                            text="{i18n>YY1_TipodeproyectoSub_cpd}"
+                                        />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{YY1_TipodeproyectoSub_cpd}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colYY1cpdF"
+                                    width="10em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text
+                                            text="{i18n>YY1_TipodeproyectoSub_cpdF}"
+                                        />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{YY1_TipodeproyectoSub_cpdF}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    id="colYY1cpdT"
+                                    width="10em"
+                                    resizable="true"
+                                >
+                                    <table:label>
+                                        <Text
+                                            text="{i18n>YY1_TipodeproyectoSub_cpdT}"
+                                        />
+                                    </table:label>
+                                    <table:template>
+                                        <Text
+                                            text="{YY1_TipodeproyectoSub_cpdT}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+                            </table:columns>
+                        </table:Table>
+                    </IconTabFilter>
+
+                    <IconTabFilter
+                        key="resourceDemand"
+                        text="{i18n>detailTabResourceDemand}"
+                    >
+                        <table:Table
+                            id="resourceDemandTable"
+                            rows="{/QueryDemand}"
+                            selectionMode="None"
+                            enableColumnReordering="true"
+                            columnHeaderVisible="true"
+                            noData="{i18n>detailNoDataResourceDemand}"
+                        >
+                            <table:extension>
+                                <Toolbar>
+                                    <ToolbarSpacer />
+                                    <Button
+                                        icon="sap-icon://action-settings"
+                                        press="onColumnSettings"
+                                    >
+                                        <customData>
+                                            <core:CustomData
+                                                key="tableId"
+                                                value="resourceDemandTable"
+                                            />
+                                        </customData>
+                                    </Button>
+                                </Toolbar>
+                            </table:extension>
+
+                            <table:columns>
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="10rem"
+                                >
+                                    <Label text="{i18n>WorkPackage}" />
+                                    <table:template>
+                                        <Text text="{WorkPackage}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="10rem"
+                                >
+                                    <Label text="{i18n>ResourceDemand}" />
+                                    <table:template>
+                                        <Text text="{ResourceDemand}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="8rem"
+                                >
+                                    <Label text="{i18n>Version}" />
+                                    <table:template>
+                                        <Text text="{Version}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="10rem"
+                                >
+                                    <Label text="{i18n>EngagementProject}" />
+                                    <table:template>
+                                        <Text text="{EngagementProject}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="14rem"
+                                >
+                                    <Label text="{i18n>ResourceDemandUUID}" />
+                                    <table:template>
+                                        <Text text="{ResourceDemandUUID}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="10rem"
+                                >
+                                    <Label text="{i18n>WorkItem}" />
+                                    <table:template>
+                                        <Text text="{WorkItem}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="12rem"
+                                >
+                                    <Label
+                                        text="{i18n>BillingControlCategory}"
+                                    />
+                                    <table:template>
+                                        <Text text="{BillingControlCategory}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="12rem"
+                                >
+                                    <Label text="{i18n>DeliveryOrganization}" />
+                                    <table:template>
+                                        <Text text="{DeliveryOrganization}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="14rem"
+                                >
+                                    <Label
+                                        text="{i18n>EngagementProjectResourceType}"
+                                    />
+                                    <table:template>
+                                        <Text
+                                            text="{EngagementProjectResourceType}"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="14rem"
+                                >
+                                    <Label
+                                        text="{i18n>EngagementProjectResource}"
+                                    />
+                                    <table:template>
+                                        <Text
+                                            text="{EngagementProjectResource}"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="12rem"
+                                >
+                                    <Label
+                                        text="{i18n>WorkforcePersonUserID}"
+                                    />
+                                    <table:template>
+                                        <Text text="{WorkforcePersonUserID}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="9rem"
+                                >
+                                    <Label text="{i18n>Country2DigitISOCode}" />
+                                    <table:template>
+                                        <Text text="{Country2DigitISOCode}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="9rem"
+                                >
+                                    <Label text="{i18n>KeyDate}" />
+                                    <table:template>
+                                        <Text
+                                            text="{path: 'KeyDate', type: 'sap.ui.model.type.Date'}"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="12rem"
+                                >
+                                    <Label text="{i18n>PersonWorkAgreement}" />
+                                    <table:template>
+                                        <Text text="{PersonWorkAgreement}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="10rem"
+                                >
+                                    <Label text="{i18n>ResourceDemandStatus}" />
+                                    <table:template>
+                                        <Text text="{ResourceDemandStatus}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="9rem"
+                                >
+                                    <Label text="{i18n>UnitOfMeasure}" />
+                                    <table:template>
+                                        <Text text="{UnitOfMeasure}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="9rem"
+                                >
+                                    <Label text="{i18n>Quantity}" />
+                                    <table:template>
+                                        <Text
+                                            text="{path: 'Quantity', formatter: '.formatQuantity'}"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="8rem"
+                                >
+                                    <Label text="{i18n>Currency}" />
+                                    <table:template>
+                                        <Text text="{Currency}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="12rem"
+                                >
+                                    <Label text="{i18n>DemandCostAmt}" />
+                                    <table:template>
+                                        <ObjectNumber
+                                            number="{path: 'DemandCostAmt', type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                            unit="{Currency}"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column
+                                    resizable="true"
+                                    autoResizable="true"
+                                    width="12rem"
+                                >
+                                    <Label text="{i18n>DemandRevAmt}" />
+                                    <table:template>
+                                        <ObjectNumber
+                                            number="{path: 'DemandRevAmt', type: 'sap.ui.model.type.Currency', formatOptions: {showMeasure: false}}"
+                                            unit="{Currency}"
+                                        />
+                                    </table:template>
+                                </table:Column>
+                            </table:columns>
+                        </table:Table>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

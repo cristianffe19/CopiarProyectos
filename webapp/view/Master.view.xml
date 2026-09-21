@@ -1,0 +1,134 @@
+<mvc:View
+    controllerName="com.co.stratesys.zpscopiarproyectos.controller.Master"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+     xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+>
+    <f:DynamicPage
+        id="masterPage"
+        headerExpanded="false"
+    >
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="Proyectos" />
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+        <f:content>
+            <List
+                id="proyectosList"
+                items="{
+                    path: '/QueryProy'
+                }"
+                mode="MultiSelect"
+                growing="true"
+                growingScrollToLoad="true"
+                noDataText="{i18n>masterNoData}"
+                selectionChange="onSelectionChange"
+                busyIndicatorDelay="0"
+            >
+                <headerToolbar>
+                  <Toolbar height="auto">
+    <VBox width="100%">
+        <HBox class="sapUiTinyMarginBottom" alignItems="Center">
+            <Button
+                id="copyButton"
+                icon="sap-icon://copy"
+                press="onCopy"
+                text="Copiar Proyectos"
+                class="sapUiTinyMarginEnd"
+            />
+            <Button
+                id="selectAllButton"
+                icon="sap-icon://complete"
+                tooltip="Marcar Todo"
+                press="onSelectAll"
+                class="sapUiTinyMarginEnd"
+            />
+            <Button
+                id="deselectAllButton"
+                icon="sap-icon://decline"
+                tooltip="Desmarcar Todo"
+                press="onDeselectAll"
+            />
+        </HBox>
+
+        <SearchField
+            width="100%"
+            liveChange="onSearch"
+            class="sapUiTinyMarginBottom"
+            placeholder="Buscar por ID o nombre de proyecto"
+        />
+
+        <HBox class="sapUiTinyMarginTop" wrap="Wrap" alignItems="Center">
+            <VBox class="sapUiTinyMarginEnd" width="16rem">
+                <Label
+                    text="Perfil de Proyecto"
+                    labelFor="perfilProyectoFilter"
+                    class="sapUiTinyMarginBottom"
+                />
+                <MultiComboBox
+                    id="perfilProyectoFilter"
+                    width="100%"
+                    selectionChange="onPerfilProyectoChange"
+                    placeholder="Todos"
+                >
+                    <core:Item key="gastosGenerales" text="Gastos generales de proyecto" />
+                    <core:Item key="proyectoIngresos" text="Proyecto con ingresos" />
+                    <core:Item key="proyectoInversion" text="Proyecto de inversión" />
+                    <core:Item key="proyectoEstadistico" text="Proyecto estadístico" />
+                </MultiComboBox>
+            </VBox>
+
+            <VBox width="16rem">
+                <Label
+                    text="Estado de Procesamiento"
+                    labelFor="estadoProcesamientoFilter"
+                    class="sapUiTinyMarginBottom"
+                />
+                <MultiComboBox
+                    id="estadoProcesamientoFilter"
+                    width="100%"
+                    selectionChange="onEstadoProcesamientoChange"
+                    placeholder="Todos"
+                >
+                    <core:Item key="Planificado" text="Planificado" />
+                    <core:Item key="Preparacion" text="Preparación" />
+                    <core:Item key="Ejecucion" text="En Ejecución" />
+                    <core:Item key="Completado" text="Completado" />
+                </MultiComboBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</Toolbar>
+                </headerToolbar>
+                <items>
+                    <ObjectListItem
+                        type="Active"
+                        press="onPress"
+                        title="{ProjectName}"
+                        number="{ProjectID}"
+                    >
+                        <attributes>
+                            <ObjectAttribute
+                                title="{i18n>estado}"
+                                text="{StageDesc}"
+                            />
+                        </attributes>
+                        <attributes>
+                            <ObjectAttribute
+                                title="{i18n>Cliente}"
+                                text="{Customer}"
+                            />
+                        </attributes>
+                        <attributes>
+                            <ObjectAttribute text="{CustomerName}" />
+                        </attributes>
+                    </ObjectListItem>
+                </items>
+            </List>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

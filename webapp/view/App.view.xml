@@ -1,0 +1,7 @@
+<mvc:View
+    controllerName="com.co.stratesys.zpscopiarproyectos.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    displayBlock="true">
+    <SplitApp id="app" />
+</mvc:View>
