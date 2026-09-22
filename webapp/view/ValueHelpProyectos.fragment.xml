@@ -1,0 +1,26 @@
+<core:FragmentDefinition xmlns="sap.ui.comp.valuehelpdialog" xmlns:m="sap.m" xmlns:fb="sap.ui.comp.filterbar" xmlns:core="sap.ui.core">
+    <ValueHelpDialog title="{i18n>Proyectos}"
+        ok=".onValueHelpOkPressProy"
+        cancel=".onValueHelpCancelPressProy"
+        afterClose=".onValueHelpAfterCloseWork"
+        supportRanges="true"
+        key="ProjectID"
+        descriptionKey="ProjectName">
+        <filterBar>
+            <fb:FilterBar advancedMode="true" search=".onFilterBarSearch" isRunningInValueHelpDialog="true">
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem groupName="__$INTERNAL$" name="ProjectID" label="Proyecto" visibleInFilterBar="true">
+                        <fb:control>
+                            <m:Input name="ProjectID"/>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <fb:FilterGroupItem groupName="__$INTERNAL$" name="ProjectName" label="Descripción" visibleInFilterBar="true">
+                        <fb:control>
+                            <m:Input name="ProjectName"/>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+        </filterBar>
+    </ValueHelpDialog>
+</core:FragmentDefinition>

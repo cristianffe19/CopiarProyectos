@@ -2,7 +2,7 @@
     controllerName="com.co.stratesys.zpscopiarproyectos.controller.Master"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-     xmlns:core="sap.ui.core"
+    xmlns:core="sap.ui.core"
     xmlns:f="sap.f"
 >
     <f:DynamicPage
@@ -12,7 +12,10 @@
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
-                    <Title text="Proyectos" />
+                    <Title
+                        id="tituloProyectos"
+                        text="Proyectos(0)"
+                    />
                 </f:heading>
             </f:DynamicPageTitle>
         </f:title>
@@ -27,82 +30,92 @@
                 growingScrollToLoad="true"
                 noDataText="{i18n>masterNoData}"
                 selectionChange="onSelectionChange"
+                updateFinished="onListUpdateFinished"
                 busyIndicatorDelay="0"
             >
                 <headerToolbar>
-                  <Toolbar height="auto">
-    <VBox width="100%">
-        <HBox class="sapUiTinyMarginBottom" alignItems="Center">
-            <Button
-                id="copyButton"
-                icon="sap-icon://copy"
-                press="onCopy"
-                text="Copiar Proyectos"
-                class="sapUiTinyMarginEnd"
-            />
-            <Button
-                id="selectAllButton"
-                icon="sap-icon://complete"
-                tooltip="Marcar Todo"
-                press="onSelectAll"
-                class="sapUiTinyMarginEnd"
-            />
-            <Button
-                id="deselectAllButton"
-                icon="sap-icon://decline"
-                tooltip="Desmarcar Todo"
-                press="onDeselectAll"
-            />
-        </HBox>
+                    <Toolbar height="auto">
+                        <VBox width="100%">
+                            <HBox
+                                class="sapUiTinyMarginBottom"
+                                alignItems="Center"
+                            >
+                                <Button
+                                    id="copyButton"
+                                    icon="sap-icon://copy"
+                                    press="onCopy"
+                                    text="Copiar Proyectos"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                                <Button
+                                    id="selectAllButton"
+                                    icon="sap-icon://complete"
+                                    tooltip="Marcar Todo"
+                                    press="onSelectAll"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                                <Button
+                                    id="deselectAllButton"
+                                    icon="sap-icon://decline"
+                                    tooltip="Desmarcar Todo"
+                                    press="onDeselectAll"
+                                />
+                                <ToggleButton
+                                    id="btnSoloSeleccionados"
+                                    icon="sap-icon://multiselect-all"
+                                    pressed="false"
+                                    tooltip="Solo Seleccionados"
+                                    press="onToggleSoloSeleccionados"
+                                />
+                            </HBox>
 
-        <SearchField
-            width="100%"
-            liveChange="onSearch"
-            class="sapUiTinyMarginBottom"
-            placeholder="Buscar por ID o nombre de proyecto"
-        />
+                            <MultiInput
+                                width="100%"
+                                liveChange="onSearch"
+                                class="sapUiTinyMarginBottom"
+                                placeholder="Buscar por ID o nombre de proyecto"
+                                showValueHelp="true"
+                                valueHelpRequest="valueHelpProyectos"
+                            />
 
-        <HBox class="sapUiTinyMarginTop" wrap="Wrap" alignItems="Center">
-            <VBox class="sapUiTinyMarginEnd" width="16rem">
-                <Label
-                    text="Perfil de Proyecto"
-                    labelFor="perfilProyectoFilter"
-                    class="sapUiTinyMarginBottom"
-                />
-                <MultiComboBox
-                    id="perfilProyectoFilter"
-                    width="100%"
-                    selectionChange="onPerfilProyectoChange"
-                    placeholder="Todos"
-                >
-                    <core:Item key="gastosGenerales" text="Gastos generales de proyecto" />
-                    <core:Item key="proyectoIngresos" text="Proyecto con ingresos" />
-                    <core:Item key="proyectoInversion" text="Proyecto de inversión" />
-                    <core:Item key="proyectoEstadistico" text="Proyecto estadístico" />
-                </MultiComboBox>
-            </VBox>
-
-            <VBox width="16rem">
-                <Label
-                    text="Estado de Procesamiento"
-                    labelFor="estadoProcesamientoFilter"
-                    class="sapUiTinyMarginBottom"
-                />
-                <MultiComboBox
-                    id="estadoProcesamientoFilter"
-                    width="100%"
-                    selectionChange="onEstadoProcesamientoChange"
-                    placeholder="Todos"
-                >
-                    <core:Item key="Planificado" text="Planificado" />
-                    <core:Item key="Preparacion" text="Preparación" />
-                    <core:Item key="Ejecucion" text="En Ejecución" />
-                    <core:Item key="Completado" text="Completado" />
-                </MultiComboBox>
-            </VBox>
-        </HBox>
-    </VBox>
-</Toolbar>
+                            <HBox
+                                class="sapUiTinyMarginTop"
+                                wrap="Wrap"
+                                alignItems="Center"
+                            >
+                                <VBox width="16rem">
+                                    <Label
+                                        text="Estado de Procesamiento"
+                                        labelFor="estadoProcesamientoFilter"
+                                        class="sapUiTinyMarginBottom"
+                                    />
+                                    <MultiComboBox
+                                        id="estadoProcesamientoFilter"
+                                        width="100%"
+                                        selectionChange="onEstadoProcesamientoChange"
+                                        placeholder="Todos"
+                                    >
+                                        <core:Item
+                                            key="Planificado"
+                                            text="Planificado"
+                                        />
+                                        <core:Item
+                                            key="Preparacion"
+                                            text="Preparación"
+                                        />
+                                        <core:Item
+                                            key="Ejecucion"
+                                            text="En Ejecución"
+                                        />
+                                        <core:Item
+                                            key="Completado"
+                                            text="Completado"
+                                        />
+                                    </MultiComboBox>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </Toolbar>
                 </headerToolbar>
                 <items>
                     <ObjectListItem

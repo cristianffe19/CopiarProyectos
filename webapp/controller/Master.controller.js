@@ -9,12 +9,22 @@ sap.ui.define([
     "sap/m/Button",
     "sap/m/Bar",
     "sap/m/Text",
-    "sap/ui/core/library"
+    "sap/ui/core/library",
+    "sap/ui/core/Fragment",
+    "sap/m/Table",
+    "sap/m/Column",
+    "sap/m/ColumnListItem",
+    "sap/ui/export/Spreadsheet",
+    "sap/ui/export/library",
+    "sap/ui/model/json/JSONModel",
+    "sap/m/Label",
+    "sap/m/Dialog",
+    "sap/ui/model/FilterType"
 
-
-], function (Controller, Filter, FilterOperator, MessageBox, MessageView, Popover, MessageItem, Button, Bar, Text, coreLibrary) {
+], function (Controller, Filter, FilterOperator, MessageBox, MessageView, Popover, MessageItem, Button, Bar, Text, coreLibrary, Fragment, Table, Column, ColumnListItem, Spreadsheet, exportLibrary, JSONModel, Label, Dialog, FilterType) {
     "use strict";
 
+    var EdmType = exportLibrary.EdmType;
     var SAP_SEVERITY = { SUCCESS: 1, INFO: 2, WARNING: 3, ERROR: 4, ABORT: 5 };
     var MessageType = coreLibrary.MessageType;
 
@@ -229,7 +239,8 @@ sap.ui.define([
                                 sToken = oResultado.token;
 
                                 aResultados.push({
-                                    projectId: proyectos,
+                                    projectAnt: oProjectData.ProjectID,
+                                    projectId: sNuevoProjectId,
                                     ok: true,
                                     mensaje: oResultado.mensaje
                                 });
@@ -238,7 +249,8 @@ sap.ui.define([
                                 sToken = oErrorProyecto.token || null;
 
                                 aResultados.push({
-                                    projectId: proyectos,
+                                    projectAnt: oProjectData.ProjectID,
+                                    projectId: sNuevoProjectId,
                                     ok: false,
                                     mensaje: oErrorProyecto.mensaje
                                 });
@@ -736,52 +748,122 @@ sap.ui.define([
             var nOk = aResultados.filter(function (r) { return r.ok; }).length;
             var nError = aResultados.length - nOk;
 
-            var aItems = aResultados.map(function (r) {
-                return new MessageItem({
-                    type: r.ok ? "Success" : "Error",
-                    title: r.projectId,
-                    subtitle: r.ok ? "Creado correctamente" : "Error en la creación",
-                    description: r.mensaje,
-                    counter: 0
-                });
+            // Modelo local solo para esta tabla de resultados
+            var oModel = new JSONModel({
+                resultados: aResultados.map(function (r) {
+                    return {
+                        projectAnt: r.projectAnt,
+                        projectId: r.projectId,
+                        estado: r.ok ? "Creado" : "Error",
+                        estadoState: r.ok ? "Success" : "Error",
+                        mensaje: r.mensaje
+                    };
+                })
             });
 
-            if (!this._oMessageView) {
-                this._oMessageView = new MessageView({
-                    showDetailPage: true,
-                    itemSelect: function () { }
+            if (!this._oResultadosDialog) {
+                this._oResultadosTable = new Table({
+                    growing: true,
+                    growingScrollToLoad: true,
+                    columns: [
+                        new Column({ header: new Label({ text: "Proyecto Original" }) }),
+                        new Column({ header: new Label({ text: "Proyecto Nuevo" }) }),
+                        new Column({ header: new Label({ text: "Estado" }) }),
+                        new Column({ header: new Label({ text: "Mensaje" }) })
+                    ]
+                });
+
+                this._oResultadosTable.bindItems({
+                    path: "/resultados",
+                    template: new ColumnListItem({
+                        cells: [
+                            new Text({ text: "{projectAnt}" }),
+                            new Text({ text: "{projectId}" }),
+                            new sap.m.ObjectStatus({
+                                text: "{estado}",
+                                state: "{estadoState}"
+                            }),
+                            new Text({ text: "{mensaje}" })
+                        ]
+                    })
                 });
 
                 this._oResumenText = new Text();
 
-                this._oMessagePopover = new Popover({
+                this._oResultadosDialog = new Dialog({
                     title: "Resultado de la creación",
-                    contentWidth: "440px",
-                    contentHeight: "400px",
-                    verticalScrolling: false,
-                    content: [this._oMessageView],
+                    contentWidth: "700px",
+                    contentHeight: "450px",
+                    resizable: true,
+                    draggable: true,
                     customHeader: new Bar({
                         contentMiddle: [this._oResumenText]
                     }),
-                    endButton: new Button({
-                        icon: "sap-icon://decline",
+                    content: [this._oResultadosTable],
+                    beginButton: new Button({
+                        text: "Exportar a Excel",
+                        icon: "sap-icon://excel-attachment",
                         press: function () {
-                            this._oMessagePopover.close();
+                            this._exportarResultadosExcel();
+                        }.bind(this)
+                    }),
+                    endButton: new Button({
+                        text: "Cerrar",
+                        press: function () {
+                            this._oResultadosDialog.close();
                         }.bind(this)
                     })
                 });
+
+                this.getView().addDependent(this._oResultadosDialog);
             }
 
-            // Limpiar ítems previos y agregar los nuevos
-            this._oMessageView.destroyItems();
-            aItems.forEach(function (oItem) {
-                this._oMessageView.addItem(oItem);
-            }.bind(this));
-
+            this._oResultadosDialog.setModel(oModel);
             this._oResumenText.setText(nOk + " correcto(s) · " + nError + " con error");
 
-            this._oMessageView.navigateBack();
-            this._oMessagePopover.openBy(oOpenerControl);
+            this._oResultadosDialog.open();
+        },
+
+        _exportarResultadosExcel: function () {
+            var aResultados = this._oResultadosDialog.getModel().getProperty("/resultados");
+
+            var aCols = [
+                {
+                    label: "Proyecto Original",
+                    property: "projectAnt",
+                    type: EdmType.String
+                },
+                {
+                    label: "Proyecto Nuevo",
+                    property: "projectId",
+                    type: EdmType.String
+                },
+                {
+                    label: "Estado",
+                    property: "estado",
+                    type: EdmType.String
+                },
+                {
+                    label: "Mensaje",
+                    property: "mensaje",
+                    type: EdmType.String
+                }
+            ];
+
+            var oSettings = {
+                workbook: {
+                    columns: aCols,
+                    hierarchyLevel: "Level"
+                },
+                dataSource: aResultados,
+                fileName: "Resumen_Creacion_Proyectos.xlsx"
+            };
+
+            var oSheet = new Spreadsheet(oSettings);
+            oSheet.build()
+                .finally(function () {
+                    oSheet.destroy();
+                });
         },
 
         onSelectAll: function (oEvent) {
@@ -803,6 +885,8 @@ sap.ui.define([
         },
 
         onSearch: function (oEvent) {
+            oEvent.getSource().setValue("");
+            /*
             var sQuery = oEvent.getParameter("newValue");
 
             this._oFilterState.search = sQuery ? [
@@ -816,6 +900,7 @@ sap.ui.define([
             ] : [];
 
             this._applyFilters();
+            */
         },
 
         onPerfilProyectoChange: function (oEvent) {
@@ -852,7 +937,7 @@ sap.ui.define([
                 Preparacion: "P002",
                 Ejecucion: "P003",
                 Completado: "P004",
-                
+
             };
 
             this._oFilterState.estadoProcesamiento = aSelectedKeys.length ? [
@@ -869,11 +954,127 @@ sap.ui.define([
 
         _applyFilters: function () {
             var aCombined = []
-                .concat(this._oFilterState.search)
-                .concat(this._oFilterState.perfilProyecto)
-                .concat(this._oFilterState.estadoProcesamiento);
+                .concat(this._oFilterState.search || [])
+                .concat(this._oFilterState.perfilProyecto || [])
+                .concat(this._oFilterState.estadoProcesamiento || [])
+                .concat(this._oFilterState.proyectosSeleccionados || [])
+                .concat(this._oFilterState.soloSeleccionados || [])
+                .filter(Boolean); // ← elimina cualquier undefined/null que se haya colado
 
             this._oList.getBinding("items").filter(aCombined);
+        },
+
+        _aplicarFiltroProyectosSeleccionados: function (aTokens) {
+            this._oFilterState.proyectosSeleccionados = aTokens.length ? [
+                new Filter({
+                    filters: aTokens.map(function (oToken) {
+                        return new Filter("ProjectID", FilterOperator.EQ, oToken.getKey());
+                    }),
+                    and: false // OR entre los proyectos seleccionados
+                })
+            ] : [];
+
+            this._applyFilters();
+        },
+
+        valueHelpProyectos: function (oEvent) {
+            this._oInputEmp = oEvent.getSource();
+            debugger;
+            if (!this._pValueHelpDialogProy) {
+                this._pValueHelpDialogProy = Fragment.load({
+                    id: this.getView().getId(),
+                    name: "com.co.stratesys.zpscopiarproyectos.view.ValueHelpProyectos",
+                    controller: this
+                }).then(function (oDialog) {
+                    this.getView().addDependent(oDialog);
+                    oDialog.setModel(this.getOwnerComponent().getModel());
+
+                    // Crear la tabla programáticamente
+                    var oTable = new Table({
+                        growing: true,
+                        growingScrollToLoad: true,
+                        columns: [
+                            new Column({ header: new Text({ text: "Proyecto" }) }),
+                            new Column({ header: new Text({ text: "Descripción" }) })
+                        ]
+                    });
+
+                    oTable.bindItems({
+                        path: "/QueryProyectos", // ajusta al EntitySet real
+                        template: new ColumnListItem({
+                            cells: [
+                                new Text({ text: "{ProjectID}" }),
+                                new Text({ text: "{ProjectName}" })
+                            ]
+                        })
+                    });
+
+                    oDialog.setTable(oTable);
+
+                    return oDialog;
+                }.bind(this));
+            }
+
+            this._pValueHelpDialogProy.then(function (oDialog) {
+                var oBinding = oDialog.getTable().getBinding("items");
+                if (oBinding) {
+                    oBinding.filter([]);
+                }
+                oDialog.open();
+            }.bind(this));
+        },
+
+        onValueHelpOkPressProy: function (oEvent) {
+            var atokens = oEvent.getParameter("tokens");
+            this._oInputEmp.setTokens(atokens);
+
+            this._aplicarFiltroProyectosSeleccionados(atokens);
+
+            oEvent.getSource().close();
+
+        },
+
+        onValueHelpCancelPressProy: function (oEvent) {
+            oEvent.getSource().close();
+        },
+
+        onListUpdateFinished: function (oEvent) {
+            debugger;
+            var iCount = oEvent.getParameter("total");
+            this.byId("tituloProyectos").setText("Proyectos (" + iCount + ")");
+        },
+
+        onToggleSoloSeleccionados: function (oEvent) {
+            var bPressed = oEvent.getParameter("pressed");
+            this._aplicarFiltroSoloSeleccionados(bPressed);
+        },
+
+        _aplicarFiltroSoloSeleccionados: function (bActivo) {
+            var oBinding = this._oList.getBinding("items");
+                   debugger;
+            if (bActivo) {
+                if (!this._aFullProjectData?.length) {
+                    // Nada seleccionado: fuerza lista vacía sin tocar el backend
+                    oBinding.filter(
+                        new Filter("ProjectID", FilterOperator.EQ, "___NINGUNO___"),
+                        FilterType.Control
+                    );
+                    return;
+                }
+
+                var oFiltroMemoria = new Filter({
+                    filters: this._aFullProjectData.map(function (sId) {
+                        return new Filter("ProjectID", FilterOperator.EQ, sId.ProjectID);
+                    }),
+                    and: false
+                });
+
+                oBinding.filter(oFiltroMemoria, FilterType.Control);
+            } else {
+                // Limpia SOLO el filtro de control; los filtros de aplicación
+                // (search, estado, etc.) siguen intactos porque son otro FilterType
+                oBinding.filter([], FilterType.Control);
+            }
         }
 
     });
