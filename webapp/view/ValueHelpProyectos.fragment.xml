@@ -11,7 +11,7 @@
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem groupName="__$INTERNAL$" name="ProjectID" label="Proyecto" visibleInFilterBar="true">
                         <fb:control>
-                            <m:MultiInput id="miFiltroProjectID" name="ProjectID"/>
+                            <m:MultiInput id="miFiltroProjectID" name="ProjectID" tokenUpdate=".onFiltroProyectosTokenUpdate" />
                         </fb:control>
                     </fb:FilterGroupItem>
                     <fb:FilterGroupItem groupName="__$INTERNAL$" name="ProjectName" label="Descripción" visibleInFilterBar="true">

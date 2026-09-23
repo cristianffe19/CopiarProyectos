@@ -1058,7 +1058,7 @@ sap.ui.define([
             this._aplicarFiltroProyectosSeleccionados(aTokensFinal);
 
             oEvent.getSource().close();
-        },        
+        },
 
         onValueHelpCancelPressProy: function (oEvent) {
             oEvent.getSource().close();
@@ -1101,6 +1101,40 @@ sap.ui.define([
                 // (search, estado, etc.) siguen intactos porque son otro FilterType
                 oBinding.filter([], FilterType.Control);
             }
+        },
+
+        onFiltroProyectosTokenUpdate: function (oEvent) {
+            // El evento se dispara ANTES de que el MultiInput termine de actualizar
+            // su lista interna de tokens, así que esperamos un tick para leerlos ya completos.
+            setTimeout(function () {
+                var oMultiInput = oEvent.getSource();
+                var aTokens = oMultiInput.getTokens();
+
+                this._filtrarTablaValueHelpProyectos(aTokens);
+            }.bind(this), 0);
+        },
+
+        _filtrarTablaValueHelpProyectos: function (aTokens) {
+            this._pValueHelpDialogProy.then(function (oDialog) {
+                var oBinding = oDialog.getTable().getBinding("items");
+                if (!oBinding) {
+                    return;
+                }
+
+                if (!aTokens.length) {
+                    oBinding.filter([]);
+                    return;
+                }
+
+                var oFiltro = new Filter({
+                    filters: aTokens.map(function (oToken) {
+                        return new Filter("ProjectID", FilterOperator.EQ, oToken.getKey());
+                    }),
+                    and: false // OR entre todos los proyectos pegados
+                });
+
+                oBinding.filter(oFiltro);
+            });
         }
 
     });
