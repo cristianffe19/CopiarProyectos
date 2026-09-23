@@ -979,7 +979,7 @@ sap.ui.define([
 
         valueHelpProyectos: function (oEvent) {
             this._oInputEmp = oEvent.getSource();
-            debugger;
+
             if (!this._pValueHelpDialogProy) {
                 this._pValueHelpDialogProy = Fragment.load({
                     id: this.getView().getId(),
@@ -1011,6 +1011,19 @@ sap.ui.define([
 
                     oDialog.setTable(oTable);
 
+                    // Habilitar que el MultiInput del filtro convierta cada línea
+                    // pegada (000002, 000003, ...) en un Token independiente.
+                    var oMultiInput = Fragment.byId(this.getView().getId(), "miFiltroProjectID");
+                    if (oMultiInput) {
+                        oMultiInput.addValidator(function (oArgs) {
+                            var sText = (oArgs.text || "").trim();
+                            if (!sText) {
+                                return null;
+                            }
+                            return new sap.m.Token({ key: sText, text: sText });
+                        });
+                    }
+
                     return oDialog;
                 }.bind(this));
             }
@@ -1025,14 +1038,27 @@ sap.ui.define([
         },
 
         onValueHelpOkPressProy: function (oEvent) {
-            var atokens = oEvent.getParameter("tokens");
-            this._oInputEmp.setTokens(atokens);
+            var aTokensSeleccionEnTabla = oEvent.getParameter("tokens") || [];
 
-            this._aplicarFiltroProyectosSeleccionados(atokens);
+            // Tokens pegados directamente en el campo de búsqueda del filtro
+            var oMultiInputFiltro = Fragment.byId(this.getView().getId(), "miFiltroProjectID");
+            var aTokensFiltro = oMultiInputFiltro ? oMultiInputFiltro.getTokens() : [];
+
+            // Unir ambas fuentes y quitar duplicados por key
+            var mUnicos = {};
+            aTokensSeleccionEnTabla.concat(aTokensFiltro).forEach(function (oToken) {
+                mUnicos[oToken.getKey()] = oToken;
+            });
+
+            var aTokensFinal = Object.keys(mUnicos).map(function (sKey) {
+                return mUnicos[sKey];
+            });
+
+            this._oInputEmp.setTokens(aTokensFinal);
+            this._aplicarFiltroProyectosSeleccionados(aTokensFinal);
 
             oEvent.getSource().close();
-
-        },
+        },        
 
         onValueHelpCancelPressProy: function (oEvent) {
             oEvent.getSource().close();
@@ -1051,7 +1077,7 @@ sap.ui.define([
 
         _aplicarFiltroSoloSeleccionados: function (bActivo) {
             var oBinding = this._oList.getBinding("items");
-                   debugger;
+            debugger;
             if (bActivo) {
                 if (!this._aFullProjectData?.length) {
                     // Nada seleccionado: fuerza lista vacía sin tocar el backend
